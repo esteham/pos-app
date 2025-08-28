@@ -15,6 +15,9 @@ class CategoriesSeeder extends Seeder
      */
     public function run(): void
     {
+
+        $faker = Fake::create();
+
         foreach(['Grocery', 'Dairy', 'Beverages', 'Personal Care'] as $name)
         {
             Category::updateOrCreate(
