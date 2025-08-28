@@ -20,7 +20,7 @@ class UsersSeeder extends Seeder
                 'name'  => 'Super Admin',
                 'phone' => '01723456785',
                 'user_type' => 'admin',
-                'password'  => Hash::makes('admin123')
+                'password'  => Hash::make('admin123')
             ]
         );
 
@@ -30,7 +30,7 @@ class UsersSeeder extends Seeder
                 'name'  => 'Store Manager',
                 'phone' => '01765786865',
                 'user_type' => 'manager',
-                'password'  => Hash::makes('manager123')
+                'password'  => Hash::make('manager123')
             ]
         );
 
@@ -40,7 +40,7 @@ class UsersSeeder extends Seeder
                 'name'  => 'Cashire01',
                 'phone' => '017094748593',
                 'user_type' => 'cashier',
-                'password'  => Hash::makes('cashire123')
+                'password'  => Hash::make('cashire123')
             ]
         );
     }
