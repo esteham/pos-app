@@ -89,6 +89,7 @@ class ProductsSeeder extends Seeder
                 'category_id' => $category->id,
                 'name' => ucfirst($faker->words(2, true)),
                 'image' => $faker->imageUrl(640, 480, 'product', true),
+                'description' => $faker->paragraph(),
                 'sku' => 'SKU-' . strtoupper($faker->unique()->bothify('???-###')),
                 'barcode' => $faker->optional()->ean13(),
                 'unit' => $unit,
