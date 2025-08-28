@@ -20,6 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'user_type',
         'password',
     ];
 
@@ -32,6 +34,14 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function isAdmin(): bool {  return $this->user_type === 'admin'; }
+
+    public function isManager(): bool { return $this->user_type === 'manager'; }
+
+    public function isCashire(): bool { return $this->user_tpe === 'cashire'; }
+
+
 
     /**
      * The attributes that should be cast.
