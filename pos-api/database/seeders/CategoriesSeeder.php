@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class CategoriesSeeder extends Seeder
 {
@@ -14,12 +15,15 @@ class CategoriesSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach(['Groceery', 'Dairy', 'Beverages', 'Personal Care'] as $name)
+        foreach(['Grocery', 'Dairy', 'Beverages', 'Personal Care'] as $name)
         {
             Category::updateOrCreate(
 
                 ['name' => $name],
-                ['slug' => Str::slug($name)]
+                [
+                    'slug' => Str::slug($name),
+                    'description' => $faker->sentence(10) //random descripton
+                ]
             
             );
         }
