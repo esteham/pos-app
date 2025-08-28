@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_no')->unique();
-            $table->foreignId('customer_id')->constrained()->nullOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('customer_name')->nullable();
             $table->string('customer_phone')->nullable();
             $table->foreignId('sold_by')->constrained('users')->cascadeOnDelete();
