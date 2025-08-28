@@ -22,12 +22,15 @@ class Product extends Model
         'is_active'
     ];
 
-    public function setBarcodeAttribute(){
+    // Barcode mutator
+    public function setBarcodeAttribute($value)
+    {
         $this->attributes['barcode'] = ($value === '' ? null : $value);
     }
 
-    public function category() {
+    // Category relation
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
-
 }
