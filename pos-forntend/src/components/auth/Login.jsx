@@ -36,7 +36,7 @@ function Login ({ setToken }){
 
             <form action="" onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="">Email/Username/Phone</label>
+                    <label htmlFor="">Email/Phone</label>
                     <input 
                         type="text"
                         value={login}

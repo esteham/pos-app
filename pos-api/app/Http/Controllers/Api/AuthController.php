@@ -22,11 +22,8 @@ class AuthController extends Controller
         if (filter_var($login, FILTER_VALIDATE_EMAIL)){
             $user = User::where('email', $login)->first();
         }
-        elseif (is_numeric($login)){
-            $user = User::where('phone', $login)->first();
-        }
         else {
-            $user = User::where('username', $login)->first();
+            $user = User::where('phone', $login)->first();
         }
 
         //if not user or password
@@ -49,7 +46,6 @@ class AuthController extends Controller
             'user'  => [
                     'id'    => $user->id,
                     'name'  => $user->name,
-                    'username'=>$user->username,
                     'phone' => $user->phone,
                     'email' => $user->email,
                 ]
