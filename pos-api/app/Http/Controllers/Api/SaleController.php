@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
@@ -126,6 +127,7 @@ class SaleController extends Controller
                 'grand_total' => round($grandTotal, 2),
                 'status' => 'paid',
                 'user_id' => optional($request->user())->id,
+                'sold_by' => optional($request->user())->id,
 
             ]); //end sale create
 
