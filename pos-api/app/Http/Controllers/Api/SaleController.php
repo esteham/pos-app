@@ -23,15 +23,15 @@ class SaleController extends Controller
     {
         $data = $request->validate([
 
-            'customer_phone'    => 'nullable|string',
+            'customer_phone'    => 'nullable|regex:/^[0-9]{10,15}$/',
             'customer_name'     => 'nullable|string',
             'payment_method'    => ['required', Rule::in(['cash', 'credit_card', 'internet_banking', 'bank_transfer'])],
             'discount'          => 'nullable|numeric|min:0',
-            'paid_ammount'      => 'required|numeric|min:0',
+            'paid_amount'      => 'required|numeric|min:0',
             'items'             => 'required|array|min:1',
             'items.*.product_id'=> 'required|exists:products,id',
-            'items.*.quantity'  => 'required|numeric|min:0.001',
-            'items.*.unit_price'=> 'required|numeric|min:0',
+            'items.*.quantity'  => 'required|numeric|min:0.001|max:100000',
+            'items.*.unit_price'=> 'required|numeric|min:0|max:100000',
             'items.*.unit'      => ['required', Rule::in(['pcs', 'kg', 'liters'])],
             'items.*.vat_percent'=> 'nullable|numeric|min:0',
         ]);
@@ -70,13 +70,13 @@ class SaleController extends Controller
 
                 if ($p->stock < $qty)
                 {
-                    abort(422, 'Insufficient Stock for {$p->name}');
+                    abort(422, 'Insufficient Stock for');
                 }
 
                 $unitPrice =(float)$line['unit_price'];
                 $vatPercent = isset($line['vat_percent']) ? (float)$line['vat_percent'] : (float)$p->vat_percent;
                 $lineAmount = $unitPrice * $qty;
-                $vatAmount = round(($lineAmount * $vatAmount) / 100, 2);
+                $vatAmount = round(($lineAmount * $vatPercent) / 100, 2);
                 $lineTotal = $lineAmount + $vatAmount;
 
                 $subtotal += $lineAmount;
@@ -105,7 +105,7 @@ class SaleController extends Controller
                     'vat_amount' => $vatAmount,
                     'line_total' => $lineTotal,
                     'created_at' => now(),
-                    'uodated_at' => now()
+                    'updated_at' => now()
 
                 ]; //end inset items
 
@@ -139,7 +139,7 @@ class SaleController extends Controller
 
             return response()->json([
 
-                'invoce_no' => $sale->invoice_no,
+                'invoice_no' => $sale->invoice_no,
                 'sale' => $sale->load('items'),
 
             ]); //end response return
