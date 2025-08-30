@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('grand_total', 10, 2)->default(0);
             $table->decimal('paid_ammount',10, 2)->default(0);
             $table->enum('payment_method', ['cash', 'credit_card', 'internet_banking', 'bank_transfer'])->default('cash');
-            $table->enum('status', ['pending', 'completed', 'canceled'])->default('pending');
+            $table->enum('status', ['pending', 'paid', 'canceled'])->default('pending');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
