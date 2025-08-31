@@ -40,16 +40,26 @@ class AuthController extends Controller
         //     'expires_at' => now()->addHours(24),
         // ]);
 
+        $cookie = cookie(
+            'pos_token',  // cookie name
+            $token,       // token value
+            60 * 24,      // minutes, 1 day
+            null,
+            null,
+            true,         // secure (HTTPS)
+            true          // httpOnly
+        );
+
 
         return response()->json([
-            'token' => $token,
+            // 'token' => $token,
             'user'  => [
                     'id'    => $user->id,
                     'name'  => $user->name,
                     'phone' => $user->phone,
                     'email' => $user->email,
                 ]
-        ]);
+        ])->cookie($cookie);
 
     }
 
@@ -58,8 +68,10 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
+        $cookie = cookie('pos_token', '', -1);
+
         return response()->json([
             'message' => 'Logged out successfully'
-        ]);
+        ])->cookie($cookie);
     }
 }
