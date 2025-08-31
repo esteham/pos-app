@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { Routes, Route, Like, useNavigate, Navigate } from 'react-router-dom';
+// import { Routes, Route, Like, useNavigate, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Login from './components/auth/Login';
