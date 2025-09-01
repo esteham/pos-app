@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// import { useNavigate } from 'react-router-dom'
+import { login } from '../api/ApiAxios';
 
-function Login ({ setToken }){
-    const [login, setLogin] = useState('');
-    const [password, setPassword] = useState('');
+export default function LoginPage()
+{
+    const [loginInput, setLoginInput] = useState('');
+    const [password, setPassword ] = useState('');
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    // const navigate = useNavigate();
 
-    const BASE_URL = import.meta.env.VITE_API_URL;
-
-    const handleSubmit = async (e) =>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
+
         try{
-            const response = await axios.post(`${BASE_URL}api/login`,{
-                login,
-                password
-            });
-            // console.log(response.data);
-            setToken(response.data.token);
-            localStorage.setItem('token', response.data.token);
-
-            setError('');
-            alert('Login Successfull!');    
-        }
-        catch(err){
-            console.error(err.response);
-            setError(err.response?.data?.message || 'Login failed')
+            await login(loginInput, password);
+            // navigate('/pos')
         }
 
-    };
+        catch (err){
+            setError(err?.response?.data?.message || 'Login Failed')
+        }
+
+        finally {
+            setLoading(false)
+        }
+
+    }
+
 
     return (
         <div>
@@ -39,8 +41,8 @@ function Login ({ setToken }){
                     <label htmlFor="">Email/Phone</label>
                     <input 
                         type="text"
-                        value={login}
-                        onChange={(e) => setLogin(e.target.value)}
+                        value={loginInput}
+                        onChange={(e) => setLoginInput(e.target.value)}
                     />
                 </div>
                 <div>
@@ -52,7 +54,9 @@ function Login ({ setToken }){
                     />
                 </div>
                 
-                <button type='submit'>Login </button>
+                <button type='submit' disabled={loading}> 
+                    { loading ? 'Logging In...' : 'Login' } 
+                </button>
             </form>
 
         </div>
@@ -60,5 +64,3 @@ function Login ({ setToken }){
     );
 
 }
-
-export default Login;
