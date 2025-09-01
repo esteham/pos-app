@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { login } from '../api/ApiAxios';
 
 export default function LoginPage()
@@ -8,7 +8,7 @@ export default function LoginPage()
     const [password, setPassword ] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,7 +17,7 @@ export default function LoginPage()
 
         try{
             await login(loginInput, password);
-            // navigate('/pos')
+            navigate('/pos')
         }
 
         catch (err){

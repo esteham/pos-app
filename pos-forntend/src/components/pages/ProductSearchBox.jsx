@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react'
-import { searchProducts } from '../api/client.js'
+import { searchProducts } from '../api/ApiAxios'
 
 export default function ProductSearchBox({ onSelect }) {
 	const [q, setQ] = useState('')

@@ -2,7 +2,7 @@ import React from 'react'
 import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom'
 import LoginPage from './components/auth/Login.jsx'
 import POSPage from './components/pages/POSPage.jsx'
-import { logout as doLogout } from './components/utils/Calc.jsx'
+import { logout as doLogout } from './components/api/ApiAxios.jsx'
 
 
 function RequireAuth({ children })
