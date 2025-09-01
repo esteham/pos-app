@@ -1,71 +1,47 @@
-import React, { useState } from 'react';
-// import { Routes, Route, Like, useNavigate, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import React from 'react'
+import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom'
+import LoginPage from './components/auth/Login.jsx'
+import POSPage from './components/pages/POSPage.jsx'
+import { logout as doLogout } from './components/utils/Calc.jsx'
 
-import Login from './components/auth/Login';
 
-function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [user, setUser] = useState(null);
+function RequireAuth({ children })
+{
+	const token = localStorage.getItem('pos_token')
+	return token ? children : <Navigate to="/login" replace />
+} 
 
-  const BASE_URL = import.meta.env.VITE_API_URL;
+export default function App()
+{
+	const navigate = useNavigate()
+	const handleLogout = () =>
+	{
+		doLogout()
+		navigate('/login')
+	}
 
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}api/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUser(res.data);
-    } catch (err) {
-      console.error(err.response);
-      alert(err.response?.data?.message || 'Failed to fetch profile');
-    }
-  };
+	return (
 
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${BASE_URL}api/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setToken('');
-      setUser(null);
-      localStorage.removeItem('token');
-      alert('Logged out successfully!');
-    } catch (err) {
-      console.error(err.response);
-    }
-  };
+			<div>
+				<nav className="navbar navbar-expand navbar-dark bg-dark">
+					<Link className="navbar-brand" to="/">Live POS</Link>
+					<div className="navbar-nav">
+						<Link className="nav-item nav-link" to="/pos">POS</Link>
+					</div>
+					<div className="ml-auto navbar-nav">
+						<button className="btn btn-sm btn-outline-light" onClick={handleLogout}>Logout</button>
+					</div>	
+				</nav>
 
-  return (
-    <div>
-      {!token ? (
-        <Login setToken={setToken} />
-      ) : (
-        <div>
-          <button onClick={fetchProfile}>Get Profile</button>
-          <button onClick={handleLogout}>Logout</button>
-          {user && (
-            <div>
-              <h3>User Info</h3>
-              <p>ID: {user.id}</p>
-              <p>Name: {user.name}</p>
-              <p>Username: {user.username}</p>
-              <p>Email: {user.email}</p>
-              <p>Phone: {user.phone}</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
+				<div className="container-fluid py-3">
+					<Routes>
+						<Route path="/login" element={<LoginPage />} />
+						<Route path="/" element={<RequireAuth> <POSPage /></RequireAuth>} />
+
+						<Route path="/pos" element={<RequireAuth> <POSPage /></RequireAuth>} />
+					</Routes>
+				</div>
+			</div>
+
+			)
 }
-
-export default App;
