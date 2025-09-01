@@ -36,11 +36,10 @@ export default function POSPage()
 		const q = parseFloat(qty)
 		const up = parseFloat(unitPrice)
 		const vp = parseFloat(vatPercent || 0)
-		if(!q || Q <= 0) return alert('Quantity must be > 0')
+		if(!q || q <= 0) return alert('Quantity must be > 0')  
 		if(!up || up < 0) return alert('Unit price invalid')
 
 		const newLine = {
-
 			product_id: selected.id,
 			name: selected.name,
 			unit: selected.unit,
@@ -52,14 +51,12 @@ export default function POSPage()
 		}
 
 		setLines(prev => {
-
 			const idx = prev.findIndex(l => l.product_id === newLine.product_id && l.unit_price === newLine.unit_price && l.vat_percent === newLine.vat_percent)
 
 			if(idx >= 0)
 			{
 				const copy = [...prev]
 				copy[idx] = {...copy[idx], quantity: copy[idx].quantity + newLine.quantity}
-
 				return copy
 			}
 
@@ -70,7 +67,6 @@ export default function POSPage()
 		setUnitPrice('')
 		setQty('')
 		setVatPercent('') 
-		
 	}
 
 	const removeLine = (i) =>
@@ -85,21 +81,19 @@ export default function POSPage()
 	}
 
 	const submitSale = async () => {
+		if(lines.length === 0) return alert('Cart is Empty.')  // return 
 
-		if(lines.length === 0) alert('Cart is Empty.')
 		setSubmitting(true)
 
 		try
 		{
 			const payload = {
-
 				customer_phone: customer.phone || null,
 				customer_name: customer.name || null,
 				payment_method: paymentMethod,
 				discount: Number(discount || 0),
 				paid_amount: Number(paidAmount || totals.grand),
-				items: lines.map( l => ({
-
+				items: lines.map(l => ({
 					product_id: l.product_id,
 					quantity: l.quantity,
 					unit_price: l.unit_price,
@@ -110,7 +104,7 @@ export default function POSPage()
 
 			const res = await createSale(payload)
 			setInvoice(res.data?.invoice_no || '')
-			alert('Sale completed! Invoice: ' +(res.data?.invoice_no || 'N/A'))
+			alert('Sale completed! Invoice: ' + (res.data?.invoice_no || 'N/A'))
 			setLines([]); setDiscount(0); setPaidAmount(0)
 			setCustomer({ phone: '', name: ''})
 		}
@@ -126,66 +120,62 @@ export default function POSPage()
 	}
 
 	return (
-
-				<div className="row">
-					<div className="col-lg-8">
-						<div className="card mb-3">
-							<div className="Card-header">
-								Product Live Search
-							</div>
-							<div className="card-body">
-								<ProductSearchBox onSelect={ onProductSelect} />
-								<hr />
-								<div className="row">
-									<div className="col-md-6">
-										<label>Selected Product</label>
-										<input className="form-control" readOnly value={selected ? `${selected.name} [${selected.sku}] (${selected.unit})` : ''} />
-										{selected && ( <small className="text-muted"> Stock: {selected.stock} | Default VAT : {selected.vat_percent}%}</small> )}
-									</div>
-									<div className="col-md-2">
-										<label>Unit Price</label>
-										<input className="form-control" value={unitPrice} onChange={e=>setUnitPrice(e.target.value)} />
-									</div>
-									<div className="col-md-2">
-										<label>{selected?.unit==='KG' ? 'KG' :'Qty'}</label>
-
-										<input className="form-control" value={qty} onChange={e=>setQty(e.target.value)} />
-									</div>
-
-									<div className="col-md-2">
-										<label>VAT %</label>
-										<input className="form-control" value={vatPercent} onChange={e=>setVatPercent(e.target.value)} />
-									</div>
-								</div>
-								<button className="btn btn-success mt-2" onClick={addLine}>+ Add to Cart
-								</button>
-							</div>
-						</div>
-
-						<CartTable lines={lines} updateQty={updateQty} removeLine={removeLine} />
+		<div className="row">
+			<div className="col-lg-8">
+				<div className="card mb-3">
+					<div className="card-header">
+						Product Live Search
 					</div>
-
-					<div className="col-lg-4">
-						<div className="card mb-2">
-							<div className="card-header">
-								Customer
+					<div className="card-body">
+						<ProductSearchBox onSelect={onProductSelect} />
+						<hr />
+						<div className="row">
+							<div className="col-md-6">
+								<label>Selected Product</label>
+								<input className="form-control" readOnly value={selected ? `${selected.name} [${selected.sku}] (${selected.unit})` : ''} />
+								{selected && ( <small className="text-muted"> Stock: {selected.stock} | Default VAT : {selected.vat_percent}%</small> )}
 							</div>
-							<div className="card-body">
-								<CustomerPhoneInput value={customer} onChange={setCustomer} />
+							<div className="col-md-2">
+								<label>Unit Price</label>
+								<input className="form-control" value={unitPrice} onChange={e=>setUnitPrice(e.target.value)} />
+							</div>
+							<div className="col-md-2">
+								<label>{selected?.unit==='KG' ? 'KG' :'Qty'}</label>
+								<input className="form-control" value={qty} onChange={e=>setQty(e.target.value)} />
+							</div>
+							<div className="col-md-2">
+								<label>VAT %</label>
+								<input className="form-control" value={vatPercent} onChange={e=>setVatPercent(e.target.value)} />
 							</div>
 						</div>
-						<PaymentSummary 
-							totals={totals}
-							discount={discount}
-							setDiscount={setDiscount}
-							paidAmount={paidAmount}
-							setPaidAmount={setPaidAmount}
-							paymentMethod={setPaymentMethod}
-							submitting={submitting}
-							onSubmit={submitSale}
-							lastInvoice={invoice}
-						 />
+						<button className="btn btn-success mt-2" onClick={addLine}>+ Add to Cart</button>
 					</div>
 				</div>
-			)
+
+				<CartTable lines={lines} updateQty={updateQty} removeLine={removeLine} />
+			</div>
+
+			<div className="col-lg-4">
+				<div className="card mb-2">
+					<div className="card-header">
+						Customer
+					</div>
+					<div className="card-body">
+						<CustomerPhoneInput value={customer} onChange={setCustomer} />
+					</div>
+				</div>
+				<PaymentSummary 
+					totals={totals}
+					discount={discount}
+					setDiscount={setDiscount}
+					paidAmount={paidAmount}
+					setPaidAmount={setPaidAmount}
+					paymentMethod={setPaymentMethod}
+					submitting={submitting}
+					onSubmit={submitSale}
+					lastInvoice={invoice}
+				/>
+			</div>
+		</div>
+	)
 }
