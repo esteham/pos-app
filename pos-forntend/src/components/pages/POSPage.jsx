@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react'
-import ProductSearchBox from '../pages/ProductSearchBox.jsx'
-import CartTable from '../pages/CartTable.jsx'
-import PaymentSummary from '../pages/PaymentSummary.jsx'
-import CustomerPhoneInput from '../pages/CustomerPhoneInput.jsx'
+import ProductSearchBox from './ProductSearchBox.jsx'
+import CartTable from './CartTable.jsx'
+import PaymentSummary from './PaymentSummary.jsx'
+import CustomerPhoneInput from './CustomerPhoneInput.jsx'
 import { createSale } from '../api/ApiAxios.jsx'
 import { computeTotals } from '../utils/Calc.jsx'
 
