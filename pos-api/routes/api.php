@@ -34,3 +34,5 @@ Route::middleware(['auth:sanctum'])->group(function (){
 
 Route::match(['get', 'post'], '/products/search', [ProductController::class, 'search']);
 Route::match(['get', 'post'], '/products/find', [ProductController::class, 'find']);
+
+Route::get('/sales/{invoice_no}/print', [SaleController::class, 'printInvoice']);
