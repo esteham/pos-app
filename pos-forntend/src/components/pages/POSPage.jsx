@@ -34,7 +34,7 @@ export default function POSPage() {
   //Generte pdf
   const handlePrintInvoice = (invoiceNo) => {
     const win = window.open(
-      `${import.meta.env.VITE_API_URL}/api/sales/${invoiceNo}/print`,
+      `${import.meta.env.VITE_API_URL}api/sales/${invoiceNo}/print`,
       "_blank"
     );
     if (win) win.focus();

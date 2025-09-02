@@ -168,9 +168,9 @@ class SaleController extends Controller
     } //end show method
 
     //Pdf function (brryvdh/laravel-dompdf)
-    public function printInvoice($invoce_no)
+    public function printInvoice($invoice_no)
     {
-        $sale = Sale::with('item')->where('invoice_no', $invoce_no)->firstOrFail();
+        $sale = Sale::with('items')->where('invoice_no', $invoice_no)->firstOrFail();
 
         $pdf = Pdf::loadView('invoices.invoice', ['sale' => $sale]);
 
