@@ -16,6 +16,9 @@ use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+// Barryvdh PDF
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class SaleController extends Controller
 {
 
@@ -163,5 +166,16 @@ class SaleController extends Controller
         return response()->json($sale);
 
     } //end show method
+
+    //Pdf function (brryvdh/laravel-dompdf)
+    public function printInvoice($invoce_no)
+    {
+        $sale = Sale::with('item')->where('invoice_no', $invoce_no)->firstOrFail();
+
+        $pdf = Pdf::loadView('invoices.invoice', ['sale' => $sale]);
+
+        return $pdf->stream($sale->invoice_no.'.pdf');
+
+    }
 
 }

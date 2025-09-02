@@ -103,8 +103,9 @@ export default function POSPage()
 			}
 
 			const res = await createSale(payload)
-			setInvoice(res.data?.invoice_no || '')
-			alert('Sale completed! Invoice: ' + (res.data?.invoice_no || 'N/A'))
+			const invoiceNo = res?.invoice_no || res?.data?.invoice_no || 'N/A';
+			setInvoice(invoiceNo);
+			alert('Sale completed! Invoice: ' + invoiceNo);
 			setLines([]); setDiscount(0); setPaidAmount(0)
 			setCustomer({ phone: '', name: ''})
 		}

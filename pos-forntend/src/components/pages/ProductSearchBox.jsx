@@ -18,13 +18,10 @@ export default function ProductSearchBox({ onSelect }) {
 
     timer.current = setTimeout(async () => {
       try {
-        console.log("Searching for:", q);
         const result = await searchProducts(q);
-        console.log("API Response:", result);``
         setList(result || []);
         setOpen(true);
       } catch (e) {
-        console.error("Search error:", e);
         setList([]);
         setOpen(false);
       }
