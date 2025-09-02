@@ -25,7 +25,7 @@ export default function POSPage()
 	const onProductSelect = (p) =>
 	{
 		setSelected(p)
-		setUnitPrice(String(p.Price || ''))
+		setUnitPrice(String(p.price || ''))
 		setQty(p.unit === 'KG' ? '0.5' : '1')
 		setVatPercent(String(p.vat_percent || 0))
 	}
@@ -90,7 +90,7 @@ export default function POSPage()
 			const payload = {
 				customer_phone: customer.phone || null,
 				customer_name: customer.name || null,
-				payment_method: paymentMethod,
+				payment_method: paymentMethod.toLowerCase(),
 				discount: Number(discount || 0),
 				paid_amount: Number(paidAmount || totals.grand),
 				items: lines.map(l => ({
