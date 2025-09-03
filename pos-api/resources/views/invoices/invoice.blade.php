@@ -334,7 +334,7 @@
             </div>
             <div class="info-right">
                 <div class="qr-code">
-                    <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code">
+                    <!-- <img src="data:image/png;base64," alt="QR Code"> -->
                 </div>
             </div>
 

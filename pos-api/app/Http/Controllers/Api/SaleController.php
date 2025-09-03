@@ -18,7 +18,7 @@ use Illuminate\Validation\Rule;
 
 // Barryvdh PDF + QR
 use Barryvdh\DomPDF\Facade\Pdf;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+// use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SaleController extends Controller
 {
@@ -175,13 +175,13 @@ class SaleController extends Controller
         $sale = Sale::with('items')->where('invoice_no', $invoice_no)->firstOrFail();
 
         //Generate QR invoice
-        $qrCode = base64_encode(
-            QrCode::format('png')->size(90)->generate(url("/invoice/{$sale->invoice_no}"))
-        );
+        // $qrCode = base64_encode(
+        //     QrCode::format('png')->size(90)->generate(url("/invoice/{$sale->invoice_no}"))
+        // );
 
         $pdf = Pdf::loadView('invoices.invoice', [
                         'sale' => $sale,
-                        'qrCode'=> $qrCode,
+                        // 'qrCode'=> $qrCode,
                     ]);
 
         return $pdf->stream($sale->invoice_no.'.pdf');
