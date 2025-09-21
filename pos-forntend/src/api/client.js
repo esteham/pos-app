@@ -34,6 +34,13 @@ export const login = async (email, password) => {
 	return res
 }
 
+//fetch category
+export async function getCategories()
+{
+	const res = await api.get('/api/admin/categories');
+	return res.data;
+}
+
 export const addStock = (payload) => api.post('/api/stock/adjust', payload)
 export const getTodayReport = () => api.get('/api/reports/today')
 export const getTopSales = (days = 7) =>  api.get('/api/reports/top-sales', { params: { days }})
@@ -112,4 +119,4 @@ export const createSale = (payload) =>
 	api.post('/api/sales', payload)
 
 export const findCustomerByPhone = (phone) => 
-  api.get('/api/customers/find', { params: { phone } })	
+  api.get('/api/customers/find', { params: { phone } })

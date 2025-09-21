@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\Admin\SupplierAdminController;
 use App\Http\Controllers\Api\Admin\PurchaseController;
 use App\Http\Controllers\Api\Admin\SupplierPaymentController;
 
+use App\Http\Controllers\Api\CategoryController;
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/products/search', [ProductController::class, 'search']);
@@ -33,6 +35,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
 	Route::get('/reports/sales', [ReportController::class, 'sales']);
 
 Route::prefix('admin')->group(function(){
+
+	Route::get('categories', [CategoryController::class, 'index']);
 
 	Route::get('/products', [ProductAdminController::class,'index']);
 	Route::post('/products', [ProductAdminController::class,'store']);

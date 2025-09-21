@@ -1,9 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams} from 'react-router-dom'
-import { createProduct, getProduct, updateProduct } from '../../../api/client.js'
+import { createProduct, getProduct, updateProduct, getCategories } from '../../../api/client.js'
 
 export default function ProductFormPage({ mode })
 {
+
+	const [categories, setCategories] = useState([])
+	const [loadingCategories, setLoadingCategories] = useState(false)
+	const [categoriesError, setCategoriesError] = useState(null)
+
+	useEffect(() => {
+		let active = true;
+		setLoadingCategories(true);
+		getCategories()
+		  .then((data) => {
+			if (active) setCategories(data || []);
+		  })
+		  .catch((err) => {
+			if (active) setCategoriesError(err?.message || 'Failed to load categories');
+		  })
+		  .finally(() => {
+			if (active) setLoadingCategories(false);
+		  });
+		return () => { active = false; };
+	  }, []);
+
 	const isEdit = mode === 'edit'
 	const { id } = useParams()
 	const nav = useNavigate()
@@ -82,9 +103,28 @@ export default function ProductFormPage({ mode })
 				<div className="card-body">
 					<div className="form-row">
 						<div className="form-group col-md-3">
-							<label>Category ID (Optional)</label>
-							<input className="form-control" value={f.category_id} onChange={e=>set('category_id',e.target.value)} />
+							<label htmlFor="category_id">Category (Optional)</label>
+							<select
+								className="form-control"
+								id="category_id"
+								name="category_id"
+								value={f.category_id || ''}
+								onChange={(e) => {
+									const value = e.target.value === '' ? '' : e.target.value
+									set('category_id', value)
+								}}
+								disabled={loadingCategories}
+							>
+								<option value="">None</option>
+								{categories.map((c) => (
+									<option key={c.id} value={c.id}>
+										{c.name}
+									</option>
+								))}
+							</select>
+							{categoriesError ? <div className="text-danger" style={{marginTop:4}}>{categoriesError}</div> : null}
 						</div>
+
 						<div className="form-group col-md-5">
 							<label>Name</label>
 							<input className="form-control" value={f.name} onChange={e=>set('name', e.target.value)} />
