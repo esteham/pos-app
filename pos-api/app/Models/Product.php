@@ -9,28 +9,21 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category_id',
-        'name',
-        'price',
-        'image',
-        'sku',
-        'barcode',
-        'unit',
-        'stock',
-        'vat_percent',
-        'is_active'
-    ];
+     protected $fillable = ['category_id','name','image','sku','barcode','unit','price','stock','vat_percent','is_active'];
 
-    // Barcode mutator
-    public function setBarcodeAttribute($value)
-    {
-        $this->attributes['barcode'] = ($value === '' ? null : $value);
-    }
+     protected $appends = ['image_url'];
 
-    // Category relation
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
+     public function setBarcodeAttribute($value)
+     {
+     	$this->attributes['barcode'] = ($value === '' ? null : $value);
+     }
+
+     public function category() { return $this->belongsTo(Category::class); }
+
+     public function getImageUrlAttribute()
+     {
+     	if(!$this->image) return null;
+
+     	return url('images/products/'.$this->image);
+     }
 }

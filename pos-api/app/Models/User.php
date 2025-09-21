@@ -35,21 +35,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function isAdmin(): bool {  return $this->user_type === 'admin'; }
-
-    public function isManager(): bool { return $this->user_type === 'manager'; }
-
-    public function isCashire(): bool { return $this->user_tpe === 'cashire'; }
-
-
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    public function isAdmin(): bool { return $this->user_type === 'admin';}
+    public function isManager(): bool { return $this->user_type === 'manager';}
+    public function isCashier(): bool { return $this->user_type === 'cashier';}
+ 
+   
 }

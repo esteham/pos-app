@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -11,67 +10,23 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'login'   => 'required|string',
-            'password'=> 'required|string|min:6',
-        ]);
+    	$data = $request->validate([
+    			'email' => 'required|email',
+    			'password' => 'required|'
+    	]);
 
-        $login = $data['login'];
+    	$user = User::where('email', $data['email'])->first();
+    	if(!$user || !Hash::check($data['password'], $user->password))
+    	{
+    		return response()->json(['message' => 'Invalid credentials'], 401);
+    	}
 
-        //Login fetch
-        if (filter_var($login, FILTER_VALIDATE_EMAIL)){
-            $user = User::where('email', $login)->first();
-        }
-        else {
-            $user = User::where('phone', $login)->first();
-        }
+    	$token = $user->createToken('pos-token')->plainTextToken;
 
-        //if not user or password
-        if (!$user || !Hash::check($data['password'], $user->password)){
-            return response()->json(['message' => 'Invalid Credentials'], 401);
-        }
+    	return response()->json([
 
-        //Create token
-        $tokenResult = $user->createToken('pos-token');
-        $token = $tokenResult->plainTextToken;
-
-        //Optional (token expiry set)
-        // $user->tokens()->latest()->first()->update([
-        //     'expires_at' => now()->addHours(24),
-        // ]);
-
-        $cookie = cookie(
-            'pos_token',  // cookie name
-            $token,       // token value
-            60 * 24,      // minutes, 1 day
-            null,
-            null,
-            true,         // secure (HTTPS)
-            true          // httpOnly
-        );
-
-
-        return response()->json([
-            'token' => $token,
-            'user'  => [
-                    'id'    => $user->id,
-                    'name'  => $user->name,
-                    'phone' => $user->phone,
-                    'email' => $user->email,
-                ]
-        ])->cookie($cookie);
-
-    }
-
-
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-
-        $cookie = cookie('pos_token', '', -1);
-
-        return response()->json([
-            'message' => 'Logged out successfully'
-        ])->cookie($cookie);
+    		'token' => $token,
+    		'user' => $user,
+    	]);
     }
 }
