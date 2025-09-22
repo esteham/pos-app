@@ -41,6 +41,15 @@ export async function getCategories()
 	return res.data;
 }
 
+// create category
+export const createCategory = (payload) => api.post('/api/admin/categories', payload)
+
+// update category
+export const updateCategory = (id, payload) => api.put(`/api/admin/categories/${id}`, payload)
+
+// delete category
+export const deleteCategory = (id) => api.delete(`/api/admin/categories/${id}`)
+
 export const addStock = (payload) => api.post('/api/stock/adjust', payload)
 export const getTodayReport = () => api.get('/api/reports/today')
 export const getTopSales = (days = 7) =>  api.get('/api/reports/top-sales', { params: { days }})
