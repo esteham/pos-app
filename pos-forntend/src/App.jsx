@@ -16,6 +16,8 @@ import AddCategoriesPage from "./pages/admin/AddCategoriesPage.jsx";
 import SupplierListPage from "./pages/admin/suppliers/SupplierListPage.jsx";
 import SupplierFormPage from "./pages/admin/suppliers/SupplierFormPage.jsx";
 import PurchaseEntryPage from "./pages/admin/purchases/PurchaseEntryPage.jsx";
+import AdminLayout from "./components/AdminLayout.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("pos_token");
@@ -59,58 +61,8 @@ export default function App() {
           Live POS
         </Link>
         <div className="navbar-nav">
-          <Link className="nav-item nav-link" to="/pos">
-            POS
-          </Link>
-
-          {isAdmin && (
-            <div className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                id="adminMenu"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Admin
-              </a>
-
-              <div className="dropdown-menu" aria-labelledby="adminMenu">
-                <Link className="dropdown-item" to="/admin/products">
-                  Products
-                </Link>
-
-                <Link className="dropdown-item" to="/admin/stock">
-                  Add Stock
-                </Link>
-                <Link className="dropdown-item" to="/admin/categories">
-                  Add Category
-                </Link>
-                <div className="dropdown-divider"></div>
-                <Link className="dropdown-item" to="/admin/today">
-                  Today's Report
-                </Link>
-                <Link className="dropdown-item" to="/admin/top">
-                  Top Sales
-                </Link>
-                <Link className="dropdown-item" to="/admin/reports/sales">
-                  Sales Report
-                </Link>
-                <Link className="dropdown-item" to="/admin/purchases">
-                  Purchase Summary
-                </Link>
-
-                <Link className="dropdown-item" to="/admin/suppliers">
-                  Suppliers
-                </Link>
-                <Link className="dropdown-item" to="/admin/purchase/new">
-                  New Purchase
-                </Link>
-              </div>
-            </div>
-          )}
+          <Link className="nav-item nav-link" to="/pos">POS</Link>
+          {isAdmin && <Link className="nav-item nav-link" to="/admin">Admin</Link>}
         </div>
 
         <div className="ml-auto navbar-nav">
@@ -130,8 +82,7 @@ export default function App() {
             path="/"
             element={
               <RequireAuth>
-                {" "}
-                <POSPage />
+                {isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/pos" replace />}
               </RequireAuth>
             }
           />
@@ -147,19 +98,34 @@ export default function App() {
           />
 
           <Route
-            path="/admin/stock"
+            path="/admin"
             element={
               <RequireAuth>
-                <AddStockPage />
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
               </RequireAuth>
             }
           />
 
-		  <Route
+          <Route
+            path="/admin/stock"
+            element={
+              <RequireAuth>
+                <AdminLayout>
+                  <AddStockPage />
+                </AdminLayout>
+              </RequireAuth>
+            }
+          />
+
+          <Route
             path="/admin/categories"
             element={
               <RequireAuth>
-                <AddCategoriesPage />
+                <AdminLayout>
+                  <AddCategoriesPage />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -167,7 +133,9 @@ export default function App() {
             path="/admin/today"
             element={
               <RequireAuth>
-                <TodayReportPage />
+                <AdminLayout>
+                  <TodayReportPage />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -175,7 +143,9 @@ export default function App() {
             path="/admin/top"
             element={
               <RequireAuth>
-                <TopSalePage />
+                <AdminLayout>
+                  <TopSalePage />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -183,7 +153,9 @@ export default function App() {
             path="/admin/reports/sales"
             element={
               <RequireAuth>
-                <SalesReportPage />
+                <AdminLayout>
+                  <SalesReportPage />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -191,7 +163,9 @@ export default function App() {
             path="/admin/purchases"
             element={
               <RequireAuth>
-                <PurchaseSummaryPage />
+                <AdminLayout>
+                  <PurchaseSummaryPage />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -200,7 +174,9 @@ export default function App() {
             path="/admin/products"
             element={
               <RequireAuth>
-                <ProductsListPage />
+                <AdminLayout>
+                  <ProductsListPage />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -209,7 +185,9 @@ export default function App() {
             path="/admin/products/new"
             element={
               <RequireAuth>
-                <ProductFormPage mode="create" />
+                <AdminLayout>
+                  <ProductFormPage mode="create" />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -218,7 +196,9 @@ export default function App() {
             path="/admin/products/:id/edit"
             element={
               <RequireAuth>
-                <ProductFormPage mode="edit" />
+                <AdminLayout>
+                  <ProductFormPage mode="edit" />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -227,7 +207,9 @@ export default function App() {
             path="/admin/suppliers"
             element={
               <RequireAuth>
-                <SupplierListPage mode="create" />
+                <AdminLayout>
+                  <SupplierListPage mode="create" />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -235,7 +217,9 @@ export default function App() {
             path="/admin/suppliers/new"
             element={
               <RequireAuth>
-                <SupplierFormPage mode="create" />
+                <AdminLayout>
+                  <SupplierFormPage mode="create" />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -243,7 +227,9 @@ export default function App() {
             path="/admin/suppliers/:id/edit"
             element={
               <RequireAuth>
-                <SupplierFormPage mode="create" />
+                <AdminLayout>
+                  <SupplierFormPage mode="create" />
+                </AdminLayout>
               </RequireAuth>
             }
           />
@@ -251,7 +237,9 @@ export default function App() {
             path="/admin/purchase/new"
             element={
               <RequireAuth>
-                <PurchaseEntryPage mode="create" />
+                <AdminLayout>
+                  <PurchaseEntryPage mode="create" />
+                </AdminLayout>
               </RequireAuth>
             }
           />

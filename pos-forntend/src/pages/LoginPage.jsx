@@ -19,7 +19,14 @@ export default function LoginPage()
 		try
 		{
 			await login(email, password)
-			navigate('/pos')			
+			// Decide redirect based on role
+			let user
+			try { user = JSON.parse(localStorage.getItem('pos_user') || 'null') } catch {}
+			const rawRole = ((user && (user.role ?? user.user_type ?? user.type)) || '')
+				.toString()
+				.toLowerCase()
+			const isAdmin = ['admin','manager','super admin','super_admin','superadmin'].includes(rawRole)
+			navigate(isAdmin ? '/admin' : '/pos')			
 		}
 
 		catch(err)
