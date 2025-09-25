@@ -123,31 +123,57 @@ if ((string)$step === '1') {
     exit;
 }
 
-if ((string)$step === '2') {   
+if ((string)$step === '2') 
+{   
     $scheme     = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+
     $defaultUrl = isset($_SERVER['HTTP_HOST']) ? $scheme.$_SERVER['HTTP_HOST'] : 'http://localhost';
-    echo '<h2>Step 2/3: Database & Admin $ Purchase Code</h2>
-    <form method="post">
-      <input type="hidden" name="step" value="3">
-      <label>APP_URL</label><br><input name="APP_URL" value="'.htmlspecialchars($defaultUrl).'" style="width:360px"><br><br>
-      <label>DB_HOST</label><br><input name="DB_HOST" value="127.0.0.1"><br><br>
-      <label>DB_PORT</label><br><input name="DB_PORT" value="3306"><br><br>
-      <label>DB_DATABASE</label><br><input name="DB_DATABASE" value="pos_db"><br><br>
-      <label>DB_USERNAME</label><br><input name="DB_USERNAME" value="root"><br><br>
-      <label>DB_PASSWORD</label><br><input type="password" name="DB_PASSWORD" value=""><br><br>
-      <hr>
 
-      <label>Purchase Code (Local)</label><br>
-      <input name="PURCHASE_CODE" placeholder="DEV-AB12-CD34"><br><br>
-      <small>Dont have a purchase code? <a href="?step=claim">Claim Purchase Code</a></small><br><br>
-      <label>Licensed To (optional)</label><br>
-      <input name="LICENSED_TO" placeholder="Your Name/ Company Name"><br><br>
+    echo '<h2>Step 2/3: Database, Admin & Purchase Code</h2>
+        <form method="post" id="installForm">
+            <input type="hidden" name="step" value="3">
 
+            <label>APP_URL</label><br>
+            <input name="APP_URL" value="'.htmlspecialchars($defaultUrl).'" style="width:360px"><br><br>
 
-      <label>Admin Email</label><br><input name="ADMIN_EMAIL" value="admin@pos.local"><br><br>
-      <label>Admin Password</label><br><input type="password" name="ADMIN_PASSWORD" value="admin123"><br><br>
-      <button>Install &raquo;</button>
-    </form>';
+            <label>DB_HOST</label><br><input name="DB_HOST" value="127.0.0.1"><br><br>
+            <label>DB_PORT</label><br><input name="DB_PORT" value="3306"><br><br>
+            <label>DB_DATABASE</label><br><input name="DB_DATABASE" value="pos_db"><br><br>
+            <label>DB_USERNAME</label><br><input name="DB_USERNAME" value="root"><br><br>
+            <label>DB_PASSWORD</label><br><input type="password" name="DB_PASSWORD" value=""><br><br>
+
+            <hr>
+
+            <label>Purchase Code</label><br>
+            <input id="PURCHASE_CODE" name="PURCHASE_CODE" placeholder="Enter your purchase code" required style="width:360px"><br>
+            <small>Don’t have a purchase code? <a href="?step=claim">Claim Purchase Code</a></small><br><br>
+
+            <label>Licensed To (optional)</label><br>
+            <input name="LICENSED_TO" placeholder="Your Name / Company Name"><br><br>
+
+            <label>Admin Email</label><br><input name="ADMIN_EMAIL" value="admin@pos.local"><br><br>
+            <label>Admin Password</label><br><input type="password" name="ADMIN_PASSWORD" value="admin123"><br><br>
+
+            <button id="installBtn" disabled>Install &raquo;</button>
+        </form>
+
+        <script>
+            const codeInput = document.getElementById("PURCHASE_CODE");
+            const btn = document.getElementById("installBtn");
+            const devPattern = /^DEV-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+
+            function gate() {
+                const v = (codeInput.value || "").trim();
+                if (v.length > 0 && !devPattern.test(v)) {
+                btn.disabled = false;
+                } else {
+                btn.disabled = true;
+                }
+            }
+            codeInput.addEventListener("input", gate);
+            gate();
+        </script>';
+
     exit;
 }
 
@@ -227,30 +253,35 @@ if ((string)$step === '3') {
     $pc_input = strtoupper(trim($_POST['PURCHASE_CODE'] ?? ''));
     $licensedTo = trim($_POST['LICENSED_TO'] ?? '');
 
-    $useOnline = false;
-    if($pc_input !== '' && !preg_match('/^DEV-[A-Z0-9]{4}-[A-Z0-9]{4}$/', $pc_input))
+    if ($pc_input === '')
     {
-        $useOnline = true;
+        echo '<h3 class="fail">Purchase code is required.</h3>';
+        echo '<p><a href="?step=2">Back</a></p>';
+        exit;
     }
 
-    //Online Verify
-
-    if($useOnline)
+    if (preg_match('/^DEV-[A-Z0-9]{4}-[A-Z0-9]{4}$/', $pc_input)) 
     {
-        $verifyUrl = 'http://127.0.0.1:8001/api/verify';
-        $payload = [
+        echo '<h3 class="fail">DEV codes are not allowed for installation. Please claim a real purchase code.</h3>';
+        echo '<p><a href="?step=claim">Claim Purchase Code</a> | <a href="?step=2">Back</a></p>';
+        exit;
+    }
 
-            'purchase_code' => $pc_input,
-            'domain' => $_SERVER['HTTP_HOST'] ?? 'localhost',
-            'app_url' => $_POST['APP_URL'] ?? 'http://localhost',
-        ];
+    //Always Online Verify
+    $verifyUrl = 'http://127.0.0.1:8001/api/verify';
+    $payload = [
 
-        $ch = curl_init($verifyUrl);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($payload),
-            CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_TIMEOUT => 15,
+        'purchase_code' => $pc_input,
+        'domain' => $_SERVER['HTTP_HOST'] ?? 'localhost',
+        'app_url' => $_POST['APP_URL'] ?? 'http://localhost',
+    ];
+
+    $ch = curl_init($verifyUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query($payload),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
     ]);
 
     $resp = curl_exec($ch);
@@ -260,6 +291,7 @@ if ((string)$step === '3') {
     if(!$resp || $err)
     {
         echo '<h3 class="fail">License verification server unreachable</h3><pre>'.htmlspecialchars($err ?: 'No response').'</pre>';
+        echo '<p><a href="?step=2">Back</a></p>';
         exit;
     }
 
@@ -267,7 +299,8 @@ if ((string)$step === '3') {
     if(empty($json['valid']))
     {
         echo '<h3 class="fail">Purchase code invalid</h3><pre>'.htmlspecialchars($resp).'</pre>';
-    exit;
+        echo '<p><a href="?step=2">Back</a></p>';
+        exit;
     }
 
     $licenseMode = 'online';
@@ -307,15 +340,15 @@ if ((string)$step === '3') {
         'DB_USERNAME'   => $_POST['DB_USERNAME'] ?? 'root',
         'DB_PASSWORD'   => $_POST['DB_PASSWORD'] ?? '',
 
-        'LICENSE_MODE' => $licenseMode,
+        'LICENSE_MODE'  => $licenseMode,
 
-        'LICENSE_SERVER' => $useOnline ? 'http://127.0.0.1:8001/api/verify':'' ,
+        'LICENSE_SERVER'=> 'http://127.0.0.1:8001/api/verify',
 
         'PURCHASE_CODE' =>  $pc_input,
 
-        'LICENSED_TO' => $licensedTo,
+        'LICENSED_TO'   => $licensedTo,
 
-        'LICENSE_STATUS' => $licenseStatus,
+        'LICENSE_STATUS'=> $licenseStatus,
 
         'LICENSE_LAST_CHECK' => date('c'),
     ];
@@ -379,7 +412,7 @@ if ((string)$step === '3') {
         echo '<pre>'.htmlspecialchars($log).'</pre>';
     }
     exit;
-}
+
 
 header('Location: ?step=1');
 exit;
